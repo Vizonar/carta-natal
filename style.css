@@ -6,17 +6,24 @@ body {
   background: #f2f2f2;
   min-height: 100vh;
   font-family: Georgia, serif;
+  margin: 0;
+  overflow: hidden;
 }
 /* 🎬 VIDEO BACKGROUND */
-#bg-video {
+#bgVideo {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+
   width: 100vw;
   height: 100vh;
-  object-fit: cover;
-  z-index: -2;
-}
 
+  object-fit: cover;
+
+  z-index: -10;
+
+  pointer-events: none;
+}
 /* overlay escuro */
 body::before {
   content: '';
@@ -37,7 +44,7 @@ body::before {
 .envelope {
   width: 200px;
   height: 110px;
-  top:150px;
+  top:300px;
   left: 550px;
   margin: 130px auto 0;
   background: #ddd;
@@ -260,8 +267,8 @@ body::before {
 
 #reset {
   position: absolute;
-  right: -200px;
-  top: 770px;
+  right: -180px;
+  top: 880px;
   padding: 10px 20px;
   background: linear-gradient(#eee, #ccc);
   border: 1px solid #bbb;
