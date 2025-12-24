@@ -1,0 +1,327 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #f2f2f2;
+  min-height: 100vh;
+  font-family: Georgia, serif;
+}
+/* 🎬 VIDEO BACKGROUND */
+#bg-video {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -2;
+}
+
+/* overlay escuro */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: -1;
+}
+
+#wrapper {
+  width: 800px;
+  margin-top: 110px;
+  position: relative;
+}
+
+/* ================= ENVELOPE ================= */
+
+.envelope {
+  width: 200px;
+  height: 110px;
+  top:150px;
+  left: 550px;
+  margin: 130px auto 0;
+  background: #ddd;
+  position: relative;
+  box-shadow:
+    0 0 1px rgba(0,0,0,0.5),
+    0 1px 3px rgba(0,0,0,0.25);
+  perspective: 800px;
+
+  transform: scale(3);
+  transform-origin: top center;
+  z-index: 1;
+}
+
+.envelope::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border: 0 solid rgba(0,0,0,0.25);
+  border-width: 45px 100px;
+  border-top-color: transparent;
+  z-index: 2;
+}
+
+/* ================= FLAPS ================= */
+
+.envelope .flap {
+  position: absolute;
+  width: 100%;
+  height: 0;
+  border: 0 solid transparent;
+  border-width: 54.5px 100px;
+  z-index: 3;
+}
+
+/* Frente */
+.envelope .flap.front {
+  border-left-color: #eee;
+  border-right-color: #eee;
+  border-bottom-color: #ccc;
+}
+
+.envelope .flap.front::after {
+  content: '';
+  position: absolute;
+  left: -100px;
+  bottom: -55.5px;
+  width: 110%;
+  height: 0;
+  border: 0 solid transparent;
+  border-width: 55.5px 100px;
+  border-bottom-color: #eee;
+}
+
+/* Tampa superior */
+.envelope .flap.top {
+  border-top-width: 55px;
+  border-top-color: #aaa;
+  transform-origin: top center;
+  transform-style: preserve-3d;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+
+.envelope.open .flap.top {
+  animation-name: flip;
+}
+
+.envelope .flap.top::after {
+  content: '';
+  position: absolute;
+  left: -100px;
+  top: -55px;
+  width: 100%;
+  height: 10;
+  border: 0 solid transparent;
+  border-width: 54px 100px;
+  border-top-color: #eee;
+}
+
+/* ================= CARTA ================= */
+
+.envelope .letter {
+  position: absolute;
+  width: 200px;  
+  height: 110px;
+  top: 0px;
+  left: 0px;
+  background: linear-gradient(#fffdf8, #f3ecdf);
+  border: 1px solid #ccc;
+  z-index: 1;
+  transform-style: preserve-3d;
+  animation-duration: 2s;
+  animation-delay: 1.5s;
+  animation-fill-mode: forwards;
+  overflow: visible;
+}
+
+.envelope.open .letter {
+  animation-name: remove;
+}
+
+/* Dobras */
+.envelope .letter::before,
+.envelope .letter::after {
+  content: '';
+  position: absolute;
+  left: -1px;
+  width: 200px;       /* igual ao tamanho da carta */
+  height: 75%;  
+  background: linear-gradient(#fffdf8, #f3ecdf);
+  border: none;  
+  transform-style: preserve-3d;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+
+.envelope .letter::before {
+  top: 0;
+  transform-origin: top center;
+  animation-delay: 4s;
+}
+
+.envelope.open .letter::before {
+  animation-name: fold-up;
+}
+
+.envelope .letter::after {
+  bottom: 0;
+  transform-origin: bottom center;
+  animation-delay: 5s;
+}
+
+.envelope.open .letter::after {
+  animation-name: fold-down;
+}
+
+/* ================= TEXTO (TYPEWRITER) ================= */
+
+.letter-content {
+  padding: 12px 14px;
+  font-size: 6px;  
+  line-height: 1.4;
+  color: #3a2f2a;
+
+  max-height: 0;
+  overflow: hidden;
+  animation: typing 4s steps(150, end) forwards;
+  animation-delay: 3.7s;
+}
+
+.letter-content h2 {
+  margin: 0 0 6px;
+  font-size: 8px;
+  text-align: center;
+  font-weight: normal;
+}
+
+.letter-content p {
+  margin: 4px 0;
+}
+
+.signature {
+  display: block;
+  margin-top: 6px;
+  text-align: right;
+  font-style: italic;
+}
+
+/* ================= ANIMAÇÕES ================= */
+
+@keyframes flip {
+  to {
+    transform: rotateX(180deg);
+    z-index: 1;
+  }
+}
+
+@keyframes remove {
+  50% {
+    top: -120px;
+  }
+  100% {
+    top: 8px;
+    z-index: 3;
+  }
+}
+
+@keyframes fold-up {
+  to {
+    transform: rotateX(140deg);
+  }
+}
+
+@keyframes fold-down {
+  to {
+    transform: rotateX(-140deg);
+  }
+}
+
+@keyframes typing {
+  from {
+    max-height: 0;
+  }
+  to {
+    max-height: 300px;
+  }
+}
+@keyframes spotifyIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= BOTÃO ================= */
+
+#reset {
+  position: absolute;
+  right: -200px;
+  top: 770px;
+  padding: 10px 20px;
+  background: linear-gradient(#eee, #ccc);
+  border: 1px solid #bbb;
+  border-radius: 25px;
+  cursor: pointer;
+  user-select: none;
+  z-index: 999;
+}
+
+#reset:hover {
+  opacity: 0.8;
+}
+
+#reset:active {
+  background: linear-gradient(#ccc, #eee);
+}
+
+#spotify-popup {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  background: #121212;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 10px;
+
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  opacity: 0;
+  transform: translateY(20px);
+
+  animation: spotifyIn 0.8s ease forwards;
+  animation-delay: 1.5s;
+  z-index: 999;
+}
+
+.spotify-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #1DB954;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #000;
+}
+
+.spotify-text strong {
+  display: block;
+  font-size: 11px;
+  color: #b3b3b3;
+}
+
+.spotify-text span {
+  font-size: 13px;
+}
