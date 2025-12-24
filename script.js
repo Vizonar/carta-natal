@@ -1,41 +1,107 @@
+const envelope = document.getElementById("envelope");
+const resetBtn = document.getElementById("reset");
+const video = document.getElementById("bgVideo");
+const letterContent = document.getElementById("letterContent");
 
-  const envelope = document.getElementById("envelope");
-  const resetBtn = document.getElementById("reset");
-  const video = document.getElementById("bgVideo");
+let opened = false;
+let typingTimeouts = [];
 
-  let opened = false;
+// salva HTML original
+const originalHTML = letterContent.innerHTML;
+letterContent.innerHTML = "";
 
-  document.addEventListener("click", async (e) => {
-    // Ignora clique no reset
-    if (e.target.closest("#reset")) return;
+// ===== TYPEWRITER HTML =====
+function startTyping() {
+  letterContent.innerHTML = "";
+  typingTimeouts.forEach(clearTimeout);
+  typingTimeouts = [];
 
-    if (opened) return;
+  const temp = document.createElement("div");
+  temp.innerHTML = originalHTML;
 
-    // Abre o envelope
-    envelope.classList.add("open");
-    opened = true;
+  function typeNode(node, parent, done) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      let text = node.textContent;
+      let i = 0;
+      let textNode = document.createTextNode("");
+      parent.appendChild(textNode);
 
-    // Inicia vídeo + áudio
-    try {
-      video.muted = false;   // libera o som
-      video.volume = 1.0;    // volume máximo permitido
-      await video.play();
-    } catch (err) {
-      console.warn("Autoplay bloqueado:", err);
+      function typeChar() {
+        if (i < text.length) {
+          textNode.textContent += text.charAt(i++);
+          typingTimeouts.push(setTimeout(typeChar, 50));
+        } else {
+          done();
+        }
+      }
+      typeChar();
+    } 
+    else if (node.nodeType === Node.ELEMENT_NODE) {
+      const clone = node.cloneNode(false);
+      parent.appendChild(clone);
+
+      const children = Array.from(node.childNodes);
+      let idx = 0;
+
+      function nextChild() {
+        if (idx < children.length) {
+          typeNode(children[idx++], clone, nextChild);
+        } else {
+          done();
+        }
+      }
+      nextChild();
+    } 
+    else {
+      done();
     }
-  });
+  }
 
-  resetBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
+  const nodes = Array.from(temp.childNodes);
+  let index = 0;
 
-    envelope.classList.remove("open");
-    void envelope.offsetWidth;
+  function nextNode() {
+    if (index < nodes.length) {
+      typeNode(nodes[index++], letterContent, nextNode);
+    }
+  }
 
-    // Para vídeo
-    video.pause();
-    video.currentTime = 0;
-    video.muted = true;
+  nextNode();
+}
 
-    opened = false;
-  });
+// ===== CLIQUE NA TELA =====
+document.addEventListener("click", async (e) => {
+  if (e.target.closest("#reset")) return;
+  if (opened) return;
 
+  envelope.classList.add("open");
+  opened = true;
+
+  try {
+    video.muted = false;
+    video.volume = 1.0;
+    await video.play();
+  } catch (err) {
+    console.warn("Autoplay bloqueado:", err);
+  }
+
+  setTimeout(startTyping, 3800);
+});
+
+// ===== RESET =====
+resetBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+
+  envelope.classList.remove("open");
+  void envelope.offsetWidth;
+
+  typingTimeouts.forEach(clearTimeout);
+  typingTimeouts = [];
+  letterContent.innerHTML = "";
+
+  video.pause();
+  video.currentTime = 0;
+  video.muted = true;
+
+  opened = false;
+});
