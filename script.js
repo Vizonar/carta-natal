@@ -1,44 +1,41 @@
-const envelope = document.querySelector('.envelope');
-const resetBtn = document.getElementById('reset');
-const letterContent = document.querySelector('.letter-content');
-const spotifyPopup = document.getElementById('spotify-popup');
-const video = document.getElementById('bg-video');
 
-// ================= RESET =================
-resetBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
+  const envelope = document.getElementById("envelope");
+  const resetBtn = document.getElementById("reset");
+  const video = document.getElementById("bgVideo");
 
-  envelope.classList.remove('open');
+  let opened = false;
 
-  // reseta texto
-  letterContent.style.animation = 'none';
-  letterContent.offsetHeight;
-  letterContent.style.animation = '';
+  document.addEventListener("click", async (e) => {
+    // Ignora clique no reset
+    if (e.target.closest("#reset")) return;
 
-  // esconde popup
-  spotifyPopup.style.opacity = '0';
-  spotifyPopup.style.transform = 'translateY(20px)';
+    if (opened) return;
 
-  // pausa vídeo
-  video.pause();
-});
+    // Abre o envelope
+    envelope.classList.add("open");
+    opened = true;
 
-// ================= ABRIR AO CLICAR =================
-document.addEventListener('click', (e) => {
-  if (e.target.closest('#reset')) return;
-  if (envelope.classList.contains('open')) return;
-
-  envelope.classList.add('open');
-
-  // ▶️ toca o vídeo COM SOM
-  video.muted = false;
-  video.volume = 1.0; 
-  video.play().catch(() => {
-    console.log('Autoplay bloqueado até interação');
+    // Inicia vídeo + áudio
+    try {
+      video.muted = false;   // libera o som
+      video.volume = 1.0;    // volume máximo permitido
+      await video.play();
+    } catch (err) {
+      console.warn("Autoplay bloqueado:", err);
+    }
   });
 
-  // mostra popup
-  spotifyPopup.style.animation = 'none';
-  spotifyPopup.offsetHeight;
-  spotifyPopup.style.animation = 'spotifyIn 0.8s ease forwards';
-});
+  resetBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+
+    envelope.classList.remove("open");
+    void envelope.offsetWidth;
+
+    // Para vídeo
+    video.pause();
+    video.currentTime = 0;
+    video.muted = true;
+
+    opened = false;
+  });
+
