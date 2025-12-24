@@ -2,12 +2,13 @@ const envelope = document.getElementById("envelope");
 const resetBtn = document.getElementById("reset");
 const video = document.getElementById("bgVideo");
 const letterContent = document.getElementById("letterContent");
+const letterTemplate = document.getElementById("letterTemplate");
 
 let opened = false;
 let typingTimeouts = [];
 
-// salva HTML original
-const originalHTML = letterContent.innerHTML;
+// salva HTML original VINDO DO TEMPLATE
+const originalHTML = letterTemplate.innerHTML;
 letterContent.innerHTML = "";
 
 // ===== TYPEWRITER HTML =====
